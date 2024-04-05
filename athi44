@@ -1,0 +1,40 @@
+import openai
+
+# Initialize OpenAI API client
+openai.api_key = "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"
+
+def chat_with_gpt(prompt, chat_log=None):
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": prompt},
+        ] if chat_log is None else chat_log + [{"role": "user", "content": prompt}],
+    )
+
+    # Extract the response text
+    response_text = response['choices'][0]['message']['content']
+
+    # Update the chat log
+    if chat_log is None:
+        chat_log = [{"role": "system", "content": "You are a helpful assistant."}]
+    chat_log.append({"role": "user", "content": prompt})
+    chat_log.append({"role": "assistant", "content": response_text})
+
+    return response_text, chat_log
+
+# Simple chat interface
+def main():
+    chat_log = None
+    print("Chat with GPT-3.5-turbo. Type 'quit' to exit.")
+
+    while True:
+        user_input = input("You: ")
+        if user_input.lower() == 'quit':
+            break
+
+        response, chat_log = chat_with_gpt(user_input, chat_log)
+        print("AI:", response)
+
+if _name_ == '_main_':
+    main()
